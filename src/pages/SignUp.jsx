@@ -84,7 +84,7 @@ export default function SignUp() {
           workasana
         </h4>
         <p className="mb-2 fs-2 text-center">Create New Account</p>
-        <p style={{ color: "grey" }} className=" text-center">
+        <p style={{ color: "grey" }} className="mb-2 text-center">
           Please enter your details.
         </p>
         <label className="form-label">Name</label>
@@ -130,10 +130,10 @@ export default function SignUp() {
             I accept Terms & Conditions
           </label>
         </div>
-        <button className="btn btn-primary mb-3" type="submit">
+        <button className="btn text-white mb-3" type="submit" style={{ backgroundColor: "#5f47ee"}}>
           Create Account
         </button>
-        <a className="mb-4 text-center" href="/login">
+        <a className="mb-4 text-center text-decoration-none" href="/login" style={{ color: "#5f47ee"}}>
           Already have an account ?
         </a>
 
