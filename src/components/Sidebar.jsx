@@ -133,7 +133,7 @@ export default function Sidebar({ pageName, currentUserDetails }) {
             Reports
           </span>
         </NavLink>
-        <NavLink className="d-flex my-3 align-items-center text-decoration-none">
+        <NavLink className="d-flex my-3 align-items-center text-decoration-none" to="/setting">
           <img
             itemprop="contentUrl"
             src="https://www.svgrepo.com/show/458884/setting-line.svg"
@@ -160,7 +160,7 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           </span>
         </NavLink>
       </div>
-      <div className="d-flex justify-content-between align-items-center mb-4 py-2 px-3 ">
+      {currentUserDetails?.email && <div className="d-flex justify-content-between align-items-center mb-4 py-2 px-3 ">
         <div className="d-flex align-items-center">
           <img
             itemprop="contentUrl"
@@ -198,7 +198,7 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           className="logOutBtn"
           onClick={logOutHandler}
         />
-      </div>
+      </div>}
     </section>
   );
 }
