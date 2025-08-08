@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 const useTokenCheck = (url, token) => {
     const [tokenObject, setTokenObject] = useState({ tokenVerified: false, tokenData: {} });
     const [loading, setLoading] = useState(true);
-    // const navigate = useNavigate();
+    
   useEffect(() => {
     const fetchData = async () => {
       const headers = {
@@ -16,13 +16,11 @@ const useTokenCheck = (url, token) => {
       })
         .then(async response => {
           const tempResponse = await response.json();
-          if(response.status === 401 || response.status === 403){
+          if(response.status === 401 || response.status === 403)
             setTokenObject({ tokenVerified: false, tokenData: tempResponse });
-            // navigate('/login');
-            setLoading(false);
-          }
           else if(response.status === 200)
             setTokenObject({ tokenVerified: true, tokenData: tempResponse });
+          setLoading(false);
         })
         .catch(err => console.log(err));
     };

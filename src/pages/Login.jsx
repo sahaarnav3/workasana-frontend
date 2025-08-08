@@ -16,7 +16,7 @@ export default function Login() {
   ); // this will only be executed if we have both the values of token and url
   useEffect(() => {
     if (tokenObject.tokenVerified) navigate("/dashboard");
-  }, [tokenObject]);
+  }, [tokenObject]);  
 
   async function formHandler(e) {
     e.preventDefault();
