@@ -12,7 +12,7 @@ export default function Sidebar({ pageName, currentUserDetails }) {
   return (
     <section
       className="d-flex flex-column justify-content-between"
-      style={{ height: "100vh", width: "20em", backgroundColor: "#efecf9" }}
+      style={{ height: "100vh", minWidth: "20em", backgroundColor: "#efecf9"}}
     >
       <div className="container d-flex flex-column ps-5 py-4">
         <h2 className="mb-5" style={{ color: "#5840e9" }}>

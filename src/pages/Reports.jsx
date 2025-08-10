@@ -24,7 +24,7 @@ export default function Reports() {
 
   return (
     <main className="d-flex flex-row" style={{ width: "100vw" }}>
-      <Sidebar pageName="Report" currentUserDetails={currentUser} />
+      <Sidebar pageName="Reports" currentUserDetails={currentUser} />
       <div className="" style={{ minWidth: "88em" }}>
         {loading ? (
           <h3 className="m-5">Loading...</h3>
