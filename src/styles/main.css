@@ -5,3 +5,13 @@ form input::placeholder {
 .logOutBtn:hover  {
     cursor: pointer;
 }
+
+.card:hover {
+    cursor: pointer;
+}
+
+.projectDisplay {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #d3d3d3 #ffffff;
+}

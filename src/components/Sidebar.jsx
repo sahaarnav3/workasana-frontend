@@ -12,7 +12,7 @@ export default function Sidebar({ pageName, currentUserDetails }) {
   return (
     <section
       className="d-flex flex-column justify-content-between"
-      style={{ height: "100vh", minWidth: "20em", backgroundColor: "#efecf9"}}
+      style={{ height: "100vh", minWidth: "20em", backgroundColor: "#efecf9" }}
     >
       <div className="container d-flex flex-column ps-5 py-4">
         <h2 className="mb-5" style={{ color: "#5840e9" }}>
@@ -24,7 +24,6 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           to="/dashboard"
         >
           <img
-            itemprop="contentUrl"
             src="https://www.svgrepo.com/show/448391/dashboard.svg"
             width="20"
             height="20"
@@ -53,7 +52,6 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           to="/project"
         >
           <img
-            itemprop="contentUrl"
             src="https://www.svgrepo.com/show/512328/grid-1525.svg"
             width="20"
             height="20"
@@ -82,7 +80,6 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           to="/team"
         >
           <img
-            itemprop="contentUrl"
             src="https://www.svgrepo.com/show/347536/team.svg"
             width="20"
             height="20"
@@ -109,7 +106,6 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           to="/reports"
         >
           <img
-            itemprop="contentUrl"
             src="https://www.svgrepo.com/show/352996/bar-graph.svg"
             width="20"
             height="20"
@@ -133,9 +129,11 @@ export default function Sidebar({ pageName, currentUserDetails }) {
             Reports
           </span>
         </NavLink>
-        <NavLink className="d-flex my-3 align-items-center text-decoration-none" to="/setting">
+        <NavLink
+          className="d-flex my-3 align-items-center text-decoration-none"
+          to="/setting"
+        >
           <img
-            itemprop="contentUrl"
             src="https://www.svgrepo.com/show/458884/setting-line.svg"
             width="20"
             height="20"
@@ -160,45 +158,47 @@ export default function Sidebar({ pageName, currentUserDetails }) {
           </span>
         </NavLink>
       </div>
-      {currentUserDetails?.email && <div className="d-flex justify-content-between align-items-center mb-4 py-2 px-3 ">
-        <div className="d-flex align-items-center">
+      {currentUserDetails?.email && (
+        <div className="d-flex justify-content-between align-items-center mb-4 py-2 px-3 ">
+          <div className="d-flex align-items-center">
+            <img
+              src="https://www.svgrepo.com/show/92943/user.svg"
+              alt="User SVG File"
+              title="User SVG File"
+              width="40"
+              height="40"
+              style={{
+                filter:
+                  "invert(0%) sepia(95%) saturate(650%) hue-rotate(575deg) brightness(85%) contrast(105%)",
+              }}
+              className="me-2"
+            />
+            <div className="d-flex flex-column">
+              <p className="m-0 p-0">
+                <strong style={{ fontSize: "14px" }}>
+                  {currentUserDetails.name}
+                </strong>
+              </p>
+              <p
+                className="m-0 p-0"
+                style={{ color: "#666666", fontSize: "12px" }}
+              >
+                {currentUserDetails.email}
+              </p>
+            </div>
+          </div>
           <img
-            itemprop="contentUrl"
-            src="https://www.svgrepo.com/show/92943/user.svg"
+            src="https://www.svgrepo.com/show/356468/logout.svg"
             alt="User SVG File"
             title="User SVG File"
-            width="40"
-            height="40"
-            style={{
-              filter:
-                "invert(0%) sepia(95%) saturate(650%) hue-rotate(575deg) brightness(85%) contrast(105%)",
-            }}
-            className="me-2"
+            width="35"
+            height="35"
+            style={{ filter: "invert(0.3)" }}
+            className="logOutBtn"
+            onClick={logOutHandler}
           />
-          <div className="d-flex flex-column">
-            <p className="m-0 p-0">
-              <strong style={{ fontSize: "14px" }}>{currentUserDetails.name}</strong>
-            </p>
-            <p
-              className="m-0 p-0"
-              style={{ color: "#666666", fontSize: "12px" }}
-            >
-              {currentUserDetails.email}
-            </p>
-          </div>
         </div>
-        <img
-          itemprop="contentUrl"
-          src="https://www.svgrepo.com/show/356468/logout.svg"
-          alt="User SVG File"
-          title="User SVG File"
-          width="35"
-          height="35"
-          style={{ filter: "invert(0.3)" }}
-          className="logOutBtn"
-          onClick={logOutHandler}
-        />
-      </div>}
+      )}
     </section>
   );
 }
