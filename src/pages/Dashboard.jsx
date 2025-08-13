@@ -9,10 +9,12 @@ import PeopleAvatar from "../components/PeopleAvatar";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState({});
-  // const [ showModal, setShowModal ] = useState({});
   const [fetchFurtherData, setFetchFurtherData] = useState(false);
   const [loggedInUserTasks, setLoggedInUserTasks] = useState();
   const [projectWiseTasks, setProjectWiseTasks] = useState();
+  // MODALS
+  const [blurEnabled, setBlurEnabled] = useState(false);
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
 
   const token = localStorage.getItem("userToken");
   const { tokenObject, loading } = useTokenCheck(
@@ -159,6 +161,15 @@ export default function Dashboard() {
     );
   }
 
+  function closeModal() {
+    setShowNewProjectModal(false);
+    setBlurEnabled(false);
+  }
+  function showProjectModal() {
+    setShowNewProjectModal(true);
+    setBlurEnabled(true);
+  }
+
   //   return loading ? (
   //     <h3 className="m-5">Loading...</h3>
   //   ) : tokenObject?.tokenVerified ? (
@@ -177,206 +188,206 @@ export default function Dashboard() {
   //   );
 
   return (
-    <main className="d-flex flex-row" style={{ width: "100vw" }}>
-      <Sidebar pageName="Dashboard" currentUserDetails={currentUser} />
-      <div
-        className=""
-        style={{ minWidth: "88em", height: "100vh", overflowY: "auto" }}
+    <>
+      <main
+        className={`d-flex flex-row ${blurEnabled ? "blurred" : ""}`}
+        style={{ width: "100vw" }}
       >
-        {loading ? (
-          <h3 className="m-5">Loading...</h3>
-        ) : tokenObject?.tokenVerified ? (
-          <section className="p-4">
-            <div className="search input-group">
+        <Sidebar pageName="Dashboard" currentUserDetails={currentUser} />
+        <div
+          className=""
+          style={{ minWidth: "88em", height: "100vh", overflowY: "auto" }}
+        >
+          {loading ? (
+            <h3 className="m-5">Loading...</h3>
+          ) : tokenObject?.tokenVerified ? (
+            <section className="p-4">
+              <div className="search input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search"
+                />
+                <span className="input-group-text">
+                  <img
+                    src="https://www.svgrepo.com/show/491125/search.svg"
+                    alt="Search Alt SVG File"
+                    width="25"
+                    height="25"
+                  ></img>
+                </span>
+              </div>
+              <div className="projectSection my-5">
+                <div className="d-flex flex-row align-items-center">
+                  <h2>
+                    <strong>Projects</strong>
+                  </h2>
+                  <select
+                    className="form-select ms-4 bg-body-secondary"
+                    style={{ width: "10em" }}
+                  >
+                    <option value="All">All</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                  <button className="btn btn-primary px-4 ms-auto rounded-1" onClick={showProjectModal}>
+                    <strong>+ New Project</strong>
+                  </button>
+                </div>
+                <div className="projectDisplay gy-3 d-flex my-3 py-3 ps-2">
+                  {projectWiseTasks ? (
+                    Object.keys(projectWiseTasks).map((project) => (
+                      <div className="col-md-4 p-0" key={project}>
+                        <div
+                          className="card me-4 p-1 border-0 rounded-3"
+                          style={{
+                            width: "27.5em",
+                            height: "17em",
+                            backgroundColor: "#f4f4f4ff",
+                            overflow: "scroll",
+                            scrollbarWidth: "none",
+                            scrollbarColor: "#d3d3d3 #ffffff",
+                          }}
+                        >
+                          <div className="card-body">
+                            <h6
+                              className="px-3 py-1 rounded-2"
+                              style={
+                                projectWiseTasks[project].projectCompleted
+                                  ? {
+                                      backgroundColor: "rgb(213 230 222)",
+                                      color: "rgb(51 106 70)",
+                                      width: "fit-content",
+                                    }
+                                  : {
+                                      backgroundColor: "#fae69bff",
+                                      color: "#b69947ff",
+                                      width: "fit-content",
+                                    }
+                              }
+                            >
+                              {projectWiseTasks[project].projectCompleted
+                                ? "Completed"
+                                : "In Progress"}
+                            </h6>
+                            <h6 className="card-title mt-3 mb-0">
+                              <strong>
+                                {
+                                  projectWiseTasks[project].taskList[0].project
+                                    .name
+                                }
+                              </strong>
+                            </h6>
+                            <p className="card-text">
+                              {
+                                projectWiseTasks[project].taskList[0].project
+                                  .description
+                              }
+                            </p>
+                            {projectWiseTasks[project].taskList.map((task) => (
+                              <div
+                                className="d-flex flex-column"
+                                key={task._id}
+                              >
+                                <div className="d-flex align-items-center">
+                                  <img
+                                    src={
+                                      task.status === "Completed"
+                                        ? "https://www.svgrepo.com/show/514262/tick-checkbox.svg"
+                                        : "https://www.svgrepo.com/show/510902/checkbox-unchecked.svg"
+                                    }
+                                    alt="Tick Checkbox SVG File"
+                                    width="20"
+                                    height="20"
+                                  />
+                                  <span className="ms-2">
+                                    <strong>{task.name}</strong>
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <h3 className="m-5">Loading...</h3>
+                  )}
+                </div>
+              </div>
+              <div className="taskSection my-5">
+                <div className="d-flex flex-row align-items-center">
+                  <h2>
+                    <strong>Tasks</strong>
+                  </h2>
+                  <select
+                    className="form-select ms-4 bg-body-secondary"
+                    style={{ width: "10em" }}
+                  >
+                    <option value="All">All</option>
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                  <button className="btn btn-primary px-4 ms-auto rounded-1">
+                    <strong>+ New Task</strong>
+                  </button>
+                </div>
+                <div className="projectDisplay gy-3 d-flex my-4 py-3 ps-2">
+                  {loggedInUserTasks ? (
+                    loggedInUserTasks.map((eachTask) => taskRender(eachTask))
+                  ) : (
+                    <h3 className="m-5">Loading...</h3>
+                  )}
+                </div>
+              </div>
+            </section>
+          ) : (
+            <h4 className="m-5">
+              ACCESS FORBIDDEN. Redirecting to Login page in 5 seconds.
+            </h4>
+          )}
+        </div>
+      </main>
+      {/* ALL THE MODALS */}
+      {showNewProjectModal ? (
+        <div className="modalOverlay">
+          <div className="newProjectModal px-4 pt-3">
+            <div className="d-flex justify-content-between align-items-center border-bottom">
+              <h3>Create New Project</h3>
+              <img
+                src="https://www.svgrepo.com/show/509072/cross.svg"
+                alt="Cross SVG File"
+                width="35"
+                height="35"
+                onClick={closeModal}
+              />
+            </div>
+            <div className="border-bottom pb-4">
+              <label className="form-label mt-4 fs-5">Project Name</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search"
+                placeholder="Enter Project Name"
               />
-              <span className="input-group-text">
-                <img
-                  src="https://www.svgrepo.com/show/491125/search.svg"
-                  alt="Search Alt SVG File"
-                  width="25"
-                  height="25"
-                ></img>
-              </span>
+              <label className="form-label mt-4 fs-5">
+                Project Description
+              </label>
+              <textarea
+                className="form-control"
+                placeholder="Enter Project Description"
+                rows="3"
+              />
             </div>
-            <div className="projectSection my-5">
-              <div className="d-flex flex-row align-items-center">
-                <h2>
-                  <strong>Projects</strong>
-                </h2>
-                <select
-                  className="form-select ms-4 bg-body-secondary"
-                  style={{ width: "10em" }}
-                >
-                  <option value="All">All</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                </select>
-                <button className="btn btn-primary px-4 ms-auto rounded-1">
-                  <strong>+ New Project</strong>
-                </button>
-              </div>
-              <div className="projectDisplay gy-3 d-flex my-3 py-3 ps-2">
-                {/* <div className="col-md-4 p-0">
-                  <div
-                    className="card me-4 p-1 border-0 rounded-3"
-                    style={{
-                      width: "27.5em",
-                      height: "20em",
-                      backgroundColor: "#f4f4f4ff",
-                      overflow: "scroll",
-                      scrollbarWidth: "none",
-                      scrollbarColor: "#d3d3d3 #ffffff",
-                    }}
-                  >
-                    <div className="card-body">
-                      <h6
-                        className="px-3 py-1 rounded-2"
-                        style={{
-                          backgroundColor: "#fae69bff",
-                          color: "#b69947ff",
-                          width: "fit-content",
-                        }}
-                      >
-                        In Progress
-                      </h6>
-                      <h6 className="card-title mt-3 mb-0">
-                        <strong>Proj Name</strong>
-                      </h6>
-                      <p className="card-text mb-2">
-                        Revamp the existing company website with a modern UI,
-                        improved navigation, and responsive layouts for all
-                        devices.
-                      </p>
-                      <div className="d-flex flex-column">
-                        <div className="d-flex align-items-center">
-                          <img
-                            src="https://www.svgrepo.com/show/514262/tick-checkbox.svg"
-                            alt="Tick Checkbox SVG File"
-                            width="20"
-                            height="20"
-                          />
-                          <span className="ms-2">
-                            <strong>Task 1</strong>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-                {projectWiseTasks ? (
-                  Object.keys(projectWiseTasks).map((project) => (
-                    <div className="col-md-4 p-0" key={project}>
-                      <div
-                        className="card me-4 p-1 border-0 rounded-3"
-                        style={{
-                          width: "27.5em",
-                          height: "17em",
-                          backgroundColor: "#f4f4f4ff",
-                          overflow: "scroll",
-                          scrollbarWidth: "none",
-                          scrollbarColor: "#d3d3d3 #ffffff",
-                        }}
-                      >
-                        <div className="card-body">
-                          <h6
-                            className="px-3 py-1 rounded-2"
-                            style={
-                              projectWiseTasks[project].projectCompleted
-                                ? {
-                                    backgroundColor: "rgb(213 230 222)",
-                                    color: "rgb(51 106 70)",
-                                    width: "fit-content",
-                                  }
-                                : {
-                                    backgroundColor: "#fae69bff",
-                                    color: "#b69947ff",
-                                    width: "fit-content",
-                                  }
-                            }
-                          >
-                            {projectWiseTasks[project].projectCompleted
-                              ? "Completed"
-                              : "In Progress"}
-                          </h6>
-                          <h6 className="card-title mt-3 mb-0">
-                            <strong>
-                              {
-                                projectWiseTasks[project].taskList[0].project
-                                  .name
-                              }
-                            </strong>
-                          </h6>
-                          <p className="card-text">
-                            {
-                              projectWiseTasks[project].taskList[0].project
-                                .description
-                            }
-                          </p>
-                          {projectWiseTasks[project].taskList.map((task) => (
-                            <div className="d-flex flex-column" key={task._id}>
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src={
-                                    task.status === "Completed"
-                                      ? "https://www.svgrepo.com/show/514262/tick-checkbox.svg"
-                                      : "https://www.svgrepo.com/show/510902/checkbox-unchecked.svg"
-                                  }
-                                  alt="Tick Checkbox SVG File"
-                                  width="20"
-                                  height="20"
-                                />
-                                <span className="ms-2">
-                                  <strong>{task.name}</strong>
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <h3 className="m-5">Loading...</h3>
-                )}
-              </div>
+            <div className="my-3 d-flex justify-content-end">
+              <button className="btn btn-secondary me-2" onClick={closeModal}>Cancel</button>
+              <button className="btn btn-primary">Create</button>
             </div>
-            <div className="taskSection my-5">
-              <div className="d-flex flex-row align-items-center">
-                <h2>
-                  <strong>Tasks</strong>
-                </h2>
-                <select
-                  className="form-select ms-4 bg-body-secondary"
-                  style={{ width: "10em" }}
-                >
-                  <option value="All">All</option>
-                  <option value="To Do">To Do</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                </select>
-                <button className="btn btn-primary px-4 ms-auto rounded-1">
-                  <strong>+ New Task</strong>
-                </button>
-              </div>
-              <div className="projectDisplay gy-3 d-flex my-4 py-3 ps-2">
-                {loggedInUserTasks ? (
-                  loggedInUserTasks.map((eachTask) => taskRender(eachTask))
-                ) : (
-                  <h3 className="m-5">Loading...</h3>
-                )}
-              </div>
-            </div>
-          </section>
-        ) : (
-          <h4 className="m-5">
-            ACCESS FORBIDDEN. Redirecting to Login page in 5 seconds.
-          </h4>
-        )}
-      </div>
-    </main>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
+    </>
   );
 }
