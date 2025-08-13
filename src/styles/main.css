@@ -15,3 +15,30 @@ form input::placeholder {
     scrollbar-width: thin;
     scrollbar-color: #d3d3d3 #ffffff;
 }
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1em;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.996);
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+.avatar-icon img {
+  border-radius: 50%;
+}
+.avatar-extra {
+  background: #f3e3d1;
+  color: #b69947;
+}
+.avatar-empty {
+  background: #f0f0f0;
+}
+
+/* Try to find out how to stop the page from being scrolled */

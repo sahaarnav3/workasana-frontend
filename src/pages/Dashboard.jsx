@@ -4,6 +4,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import { useEffect, useState } from "react";
 import useTokenCheck from "../utils/useTokenCheck";
 import axios from "axios";
+import PeopleAvatar from "../components/PeopleAvatar";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -69,10 +70,94 @@ export default function Dashboard() {
         );
         temp[project].projectCompleted = value;
       });
-      // console.log("temp", temp);
+      console.log("temp", temp);
       setProjectWiseTasks(temp);
     }
   }, [loggedInUserTasks]);
+
+  function formatDate(createdAt, daysToAdd = 0) {
+    const newDate = new Date(createdAt);
+    newDate.setDate(newDate.getDate() + daysToAdd);
+
+    //Format Date in needed format e.g. - 20th Dec 2024
+    const day = newDate.getDate();
+    const month = newDate.toLocaleDateString("en-US", { month: "short" });
+    const year = newDate.getFullYear();
+
+    // Add suffix (st, nd, rd, th)
+    const suffix = (d) => {
+      if (d > 3 && d < 21) return "th";
+      switch (d % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+    return `${day}${suffix(day)} ${month} ${year}`;
+  }
+
+  function taskRender(eachTask) {
+    const personArray = eachTask.team.members.reduce(
+      // (acc, curr) => acc.push({ name: curr, initial: curr[0] }),
+      (acc, curr) => [...acc, { name: curr, initial: curr[0] }],
+      []
+    );
+    let color = { backgroundColor: "#fae69bff", color: "#b69947ff" };
+    if (eachTask.status === "To Do")
+      color = { backgroundColor: "#9abbeaff", color: "#4775b6ff" };
+    else if (eachTask.status === "Completed")
+      color = {
+        backgroundColor: "rgb(213, 230, 222)",
+        color: "rgb(51, 106, 70)",
+      };
+    else if (eachTask.status === "Blocked")
+      color = {
+        backgroundColor: "rgba(248, 185, 185, 1)",
+        color: "rgba(188, 44, 44, 1)",
+      };
+    return (
+      <div className="col-md-4 p-0">
+        <div
+          className="card me-4 p-1 border-0 rounded-3"
+          style={{
+            width: "27.5em",
+            backgroundColor: "#f4f4f4ff",
+            overflow: "scroll",
+            scrollbarWidth: "none",
+            scrollbarColor: "#d3d3d3 #ffffff",
+          }}
+        >
+          <div className="card-body">
+            <h6
+              className="px-3 py-1 rounded-2"
+              style={{
+                backgroundColor: `${color.backgroundColor}`,
+                color: `${color.color}`,
+                width: "fit-content",
+              }}
+            >
+              {eachTask.status}
+            </h6>
+            <h6 className="card-title mt-3 mb-0">
+              <strong>{eachTask.name}</strong>
+            </h6>
+            <p className="mt-2" style={{ color: "grey" }}>
+              <strong>
+                Due on:{" "}
+                {formatDate(eachTask.createdAt, eachTask.timeToComplete)}
+              </strong>
+            </p>
+            <PeopleAvatar people={personArray} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   //   return loading ? (
   //     <h3 className="m-5">Loading...</h3>
@@ -126,7 +211,7 @@ export default function Dashboard() {
                   className="form-select ms-4 bg-body-secondary"
                   style={{ width: "10em" }}
                 >
-                  <option value="To DO">To Do</option>
+                  <option value="All">All</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Completed">Completed</option>
                 </select>
@@ -140,8 +225,11 @@ export default function Dashboard() {
                     className="card me-4 p-1 border-0 rounded-3"
                     style={{
                       width: "27.5em",
-                      height: "12em",
+                      height: "20em",
                       backgroundColor: "#f4f4f4ff",
+                      overflow: "scroll",
+                      scrollbarWidth: "none",
+                      scrollbarColor: "#d3d3d3 #ffffff",
                     }}
                   >
                     <div className="card-body">
@@ -155,14 +243,27 @@ export default function Dashboard() {
                       >
                         In Progress
                       </h6>
-                      <h6 className="card-title mt-4 mb-0">
+                      <h6 className="card-title mt-3 mb-0">
                         <strong>Proj Name</strong>
                       </h6>
-                      <p className="card-text">
+                      <p className="card-text mb-2">
                         Revamp the existing company website with a modern UI,
                         improved navigation, and responsive layouts for all
                         devices.
                       </p>
+                      <div className="d-flex flex-column">
+                        <div className="d-flex align-items-center">
+                          <img
+                            src="https://www.svgrepo.com/show/514262/tick-checkbox.svg"
+                            alt="Tick Checkbox SVG File"
+                            width="20"
+                            height="20"
+                          />
+                          <span className="ms-2">
+                            <strong>Task 1</strong>
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div> */}
@@ -173,24 +274,35 @@ export default function Dashboard() {
                         className="card me-4 p-1 border-0 rounded-3"
                         style={{
                           width: "27.5em",
-                          height: "12em",
+                          height: "17em",
                           backgroundColor: "#f4f4f4ff",
+                          overflow: "scroll",
+                          scrollbarWidth: "none",
+                          scrollbarColor: "#d3d3d3 #ffffff",
                         }}
                       >
                         <div className="card-body">
                           <h6
                             className="px-3 py-1 rounded-2"
-                            style={{
-                              backgroundColor: "#fae69bff",
-                              color: "#b69947ff",
-                              width: "fit-content",
-                            }}
+                            style={
+                              projectWiseTasks[project].projectCompleted
+                                ? {
+                                    backgroundColor: "rgb(213 230 222)",
+                                    color: "rgb(51 106 70)",
+                                    width: "fit-content",
+                                  }
+                                : {
+                                    backgroundColor: "#fae69bff",
+                                    color: "#b69947ff",
+                                    width: "fit-content",
+                                  }
+                            }
                           >
                             {projectWiseTasks[project].projectCompleted
                               ? "Completed"
                               : "In Progress"}
                           </h6>
-                          <h6 className="card-title mt-4 mb-0">
+                          <h6 className="card-title mt-3 mb-0">
                             <strong>
                               {
                                 projectWiseTasks[project].taskList[0].project
@@ -204,10 +316,55 @@ export default function Dashboard() {
                                 .description
                             }
                           </p>
+                          {projectWiseTasks[project].taskList.map((task) => (
+                            <div className="d-flex flex-column" key={task._id}>
+                              <div className="d-flex align-items-center">
+                                <img
+                                  src={
+                                    task.status === "Completed"
+                                      ? "https://www.svgrepo.com/show/514262/tick-checkbox.svg"
+                                      : "https://www.svgrepo.com/show/510902/checkbox-unchecked.svg"
+                                  }
+                                  alt="Tick Checkbox SVG File"
+                                  width="20"
+                                  height="20"
+                                />
+                                <span className="ms-2">
+                                  <strong>{task.name}</strong>
+                                </span>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
                   ))
+                ) : (
+                  <h3 className="m-5">Loading...</h3>
+                )}
+              </div>
+            </div>
+            <div className="taskSection my-5">
+              <div className="d-flex flex-row align-items-center">
+                <h2>
+                  <strong>Tasks</strong>
+                </h2>
+                <select
+                  className="form-select ms-4 bg-body-secondary"
+                  style={{ width: "10em" }}
+                >
+                  <option value="All">All</option>
+                  <option value="To Do">To Do</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+                <button className="btn btn-primary px-4 ms-auto rounded-1">
+                  <strong>+ New Task</strong>
+                </button>
+              </div>
+              <div className="projectDisplay gy-3 d-flex my-4 py-3 ps-2">
+                {loggedInUserTasks ? (
+                  loggedInUserTasks.map((eachTask) => taskRender(eachTask))
                 ) : (
                   <h3 className="m-5">Loading...</h3>
                 )}

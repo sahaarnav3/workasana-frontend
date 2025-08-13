@@ -49,7 +49,7 @@ export default function Sidebar({ pageName, currentUserDetails }) {
         </NavLink>
         <NavLink
           className="d-flex my-3 align-items-center text-decoration-none"
-          to="/project"
+          // to="/project"
         >
           <img
             src="https://www.svgrepo.com/show/512328/grid-1525.svg"
