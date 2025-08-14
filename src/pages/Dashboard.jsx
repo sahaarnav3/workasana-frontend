@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router";
-import Sidebar from "../components/Sidebar";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import { useEffect, useState } from "react";
 import useTokenCheck from "../utils/useTokenCheck";
 import axios from "axios";
+
+//Components
+import Sidebar from "../components/Sidebar";
 import PeopleAvatar from "../components/PeopleAvatar";
+import CreateNewTaskModal from "../components/CreateNewTaskModal";
+import CreateNewProjectModal from "../components/CreateNewProjectModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -15,6 +19,7 @@ export default function Dashboard() {
   // MODALS
   const [blurEnabled, setBlurEnabled] = useState(false);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
 
   const token = localStorage.getItem("userToken");
   const { tokenObject, loading } = useTokenCheck(
@@ -163,10 +168,15 @@ export default function Dashboard() {
 
   function closeModal() {
     setShowNewProjectModal(false);
+    setShowNewTaskModal(false);
     setBlurEnabled(false);
   }
   function showProjectModal() {
     setShowNewProjectModal(true);
+    setBlurEnabled(true);
+  }
+  function showTaskModal() {
+    setShowNewTaskModal(true);
     setBlurEnabled(true);
   }
 
@@ -230,7 +240,10 @@ export default function Dashboard() {
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                   </select>
-                  <button className="btn btn-primary px-4 ms-auto rounded-1" onClick={showProjectModal}>
+                  <button
+                    className="btn btn-primary px-4 ms-auto rounded-1"
+                    onClick={showProjectModal}
+                  >
                     <strong>+ New Project</strong>
                   </button>
                 </div>
@@ -329,7 +342,10 @@ export default function Dashboard() {
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                   </select>
-                  <button className="btn btn-primary px-4 ms-auto rounded-1">
+                  <button
+                    className="btn btn-primary px-4 ms-auto rounded-1"
+                    onClick={showTaskModal}
+                  >
                     <strong>+ New Task</strong>
                   </button>
                 </div>
@@ -351,40 +367,12 @@ export default function Dashboard() {
       </main>
       {/* ALL THE MODALS */}
       {showNewProjectModal ? (
-        <div className="modalOverlay">
-          <div className="newProjectModal px-4 pt-3">
-            <div className="d-flex justify-content-between align-items-center border-bottom">
-              <h3>Create New Project</h3>
-              <img
-                src="https://www.svgrepo.com/show/509072/cross.svg"
-                alt="Cross SVG File"
-                width="35"
-                height="35"
-                onClick={closeModal}
-              />
-            </div>
-            <div className="border-bottom pb-4">
-              <label className="form-label mt-4 fs-5">Project Name</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter Project Name"
-              />
-              <label className="form-label mt-4 fs-5">
-                Project Description
-              </label>
-              <textarea
-                className="form-control"
-                placeholder="Enter Project Description"
-                rows="3"
-              />
-            </div>
-            <div className="my-3 d-flex justify-content-end">
-              <button className="btn btn-secondary me-2" onClick={closeModal}>Cancel</button>
-              <button className="btn btn-primary">Create</button>
-            </div>
-          </div>
-        </div>
+        <CreateNewProjectModal closeModal={closeModal} />
+      ) : (
+        ""
+      )}
+      {showNewTaskModal ? (
+        <CreateNewTaskModal closeModal={closeModal} />
       ) : (
         ""
       )}
