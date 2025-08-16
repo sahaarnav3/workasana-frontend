@@ -2,6 +2,10 @@ form input::placeholder {
     font-size: 14px;
 }
 
+body {
+  /* overflow: hidden; */
+}
+
 .logOutBtn:hover  {
     cursor: pointer;
 }

@@ -14,7 +14,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState({});
   const [fetchFurtherData, setFetchFurtherData] = useState(false);
-  const [loggedInUserTasks, setLoggedInUserTasks] = useState();
+  const [loggedInUserTasks, setLoggedInUserTasks] = useState([]);
   const [projectWiseTasks, setProjectWiseTasks] = useState();
   // MODALS
   const [blurEnabled, setBlurEnabled] = useState(false);
@@ -53,12 +53,7 @@ export default function Dashboard() {
         })
         .catch((error) => console.log("Error fetching data:", error));
     }
-  }, [fetchFurtherData]);
-
-  // useEffect(() => {
-  //   if(loggedInUserTasks)
-  //     console.log("loggedinuserdeets", loggedInUserTasks);
-  // }, [loggedInUserTasks])
+  }, [fetchFurtherData, token, currentUser]);
 
   useEffect(() => {
     if (loggedInUserTasks) {
@@ -77,7 +72,7 @@ export default function Dashboard() {
         );
         temp[project].projectCompleted = value;
       });
-      console.log("temp", temp);
+      // console.log("temp", temp);
       setProjectWiseTasks(temp);
     }
   }, [loggedInUserTasks]);
@@ -128,7 +123,7 @@ export default function Dashboard() {
         color: "rgba(188, 44, 44, 1)",
       };
     return (
-      <div className="col-md-4 p-0">
+      <div className="col-md-4 p-0" key={eachTask._id}>
         <div
           className="card me-4 p-1 border-0 rounded-3"
           style={{
@@ -372,7 +367,7 @@ export default function Dashboard() {
         ""
       )}
       {showNewTaskModal ? (
-        <CreateNewTaskModal closeModal={closeModal} />
+        <CreateNewTaskModal closeModal={closeModal} tokenVerified={tokenObject.tokenVerified} setLoggedInUserTasks={setLoggedInUserTasks} loggedInUserTasks={loggedInUserTasks} />
       ) : (
         ""
       )}
