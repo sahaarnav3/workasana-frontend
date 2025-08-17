@@ -67,7 +67,7 @@ export default function Dashboard() {
       const projectNames = Object.keys(temp);
       projectNames.forEach((project) => {
         const value = temp[project].taskList.reduce(
-          (acc, curr) => curr.status === "Completed",
+          (acc, curr) => curr.status === "Completed" && acc,
           true
         );
         temp[project].projectCompleted = value;
@@ -362,12 +362,12 @@ export default function Dashboard() {
       </main>
       {/* ALL THE MODALS */}
       {showNewProjectModal ? (
-        <CreateNewProjectModal closeModal={closeModal} />
+        <CreateNewProjectModal closeModal={closeModal} token={token} />
       ) : (
         ""
       )}
       {showNewTaskModal ? (
-        <CreateNewTaskModal closeModal={closeModal} tokenVerified={tokenObject.tokenVerified} setLoggedInUserTasks={setLoggedInUserTasks} loggedInUserTasks={loggedInUserTasks} />
+        <CreateNewTaskModal closeModal={closeModal} tokenVerified={tokenObject.tokenVerified} setLoggedInUserTasks={setLoggedInUserTasks} loggedInUserTasks={loggedInUserTasks} token={token} />
       ) : (
         ""
       )}

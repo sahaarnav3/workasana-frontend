@@ -4,7 +4,13 @@ import Select from "react-select";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export default function CreateNewTaskModal({ closeModal, tokenVerified, setLoggedInUserTasks, loggedInUserTasks }) {
+export default function CreateNewTaskModal({
+  closeModal,
+  tokenVerified,
+  setLoggedInUserTasks,
+  loggedInUserTasks,
+  token,
+}) {
   const [projectName, setProjectName] = useState("");
   const [taskName, setTaskName] = useState("");
   const [teamName, setTeamName] = useState("");
@@ -14,8 +20,6 @@ export default function CreateNewTaskModal({ closeModal, tokenVerified, setLogge
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  const token = localStorage.getItem("userToken");
 
   //Storing all fetched data from Mongoose.
   const [listOfProjects, setListOfProjects] = useState();
@@ -147,16 +151,20 @@ export default function CreateNewTaskModal({ closeModal, tokenVerified, setLogge
       .then((response) => {
         // console.log(response)
         if (response.status === 200) {
+          setError("");
           setSuccess("Task Created Successfully.");
           console.log("loggedinuer", loggedInUserTasks);
           console.log("response", response.data.data);
           setLoggedInUserTasks([...loggedInUserTasks, response.data.data]);
+        } else {
+          setError(response.error);
+          setSuccess("");
         }
-        else setError(response.error);
       })
       .catch((error) => {
         console.log("Error creating task:", error);
         setError("Error creating Task. Check Logs.");
+        setSuccess("");
       });
   }
 
