@@ -38,7 +38,7 @@ export default function Dashboard() {
       }, 5000);
       setFetchFurtherData(false);
     }
-  }, [tokenObject]);
+  }, [tokenObject, navigate]);
 
   useEffect(() => {
     if (fetchFurtherData) {
