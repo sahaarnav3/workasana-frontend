@@ -14,8 +14,10 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState({});
   const [fetchFurtherData, setFetchFurtherData] = useState(false);
-  const [loggedInUserTasks, setLoggedInUserTasks] = useState([]);
-  const [projectWiseTasks, setProjectWiseTasks] = useState();
+  const [loggedInUserTasks, setLoggedInUserTasks] = useState(null);
+  const [filteredLoggedInUserTask, setFilteredLoggedInUserTask] = useState(null);
+  const [projectWiseTasks, setProjectWiseTasks] = useState(null);
+  const [filteredProjectWiseTasks, setFilteredProjectWiseTasks] = useState(null);
   // MODALS
   const [blurEnabled, setBlurEnabled] = useState(false);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
@@ -48,8 +50,10 @@ export default function Dashboard() {
       })
         .then(async (response) => {
           // console.log(response);
-          if (response.status == 200)
+          if (response.status == 200){
+            setFilteredLoggedInUserTask(response.data);
             return setLoggedInUserTasks(response.data);
+          }
         })
         .catch((error) => console.log("Error fetching data:", error));
     }
@@ -74,6 +78,7 @@ export default function Dashboard() {
       });
       // console.log("temp", temp);
       setProjectWiseTasks(temp);
+      setFilteredProjectWiseTasks(temp);
     }
   }, [loggedInUserTasks]);
 
@@ -175,22 +180,31 @@ export default function Dashboard() {
     setBlurEnabled(true);
   }
 
-  //   return loading ? (
-  //     <h3 className="m-5">Loading...</h3>
-  //   ) : tokenObject?.tokenVerified ? (
-  //     <main className="d-flex flex-row" style={{ width: "100vw" }}>
-  //       <div>
-  //         <Sidebar pageName="Dashboard" currentUserDetails={currentUser} />
-  //       </div>
-  //       <div className="" style={{ minWidth: "88em" }}>
-  //         asdasd
-  //       </div>
-  //     </main>
-  //   ) : (
-  //     <h4 className="m-5">
-  //       ACCESS FORBIDDEN. Redirecting to Login page in 5 seconds.
-  //     </h4>
-  //   );
+  function projectFilterHandler(e) {
+    if (e.target.value === "All")
+      return setFilteredProjectWiseTasks(projectWiseTasks);
+    const projects = Object.keys(projectWiseTasks);
+    const temp = {};
+    if (e.target.value === "In Progress")
+      projects.forEach((project) =>
+        projectWiseTasks[project].projectCompleted
+          ? ""
+          : (temp[project] = projectWiseTasks[project])
+      );
+    else
+      projects.forEach((project) =>
+        projectWiseTasks[project].projectCompleted
+          ? (temp[project] = projectWiseTasks[project])
+          : ""
+      );
+    setFilteredProjectWiseTasks(temp);
+  }
+
+  function taskFilterHandler(e) {
+    if(e.target.value === "All")
+      return setFilteredLoggedInUserTask(loggedInUserTasks);
+    setFilteredLoggedInUserTask(loggedInUserTasks.filter(task => task.status === e.target.value));
+  }
 
   return (
     <>
@@ -222,7 +236,7 @@ export default function Dashboard() {
                   ></img>
                 </span>
               </div>
-              <div className="projectSection my-5">
+              <div className="projectSection my-5" style={{ height: "370px" }}>
                 <div className="d-flex flex-row align-items-center">
                   <h2>
                     <strong>Projects</strong>
@@ -230,6 +244,7 @@ export default function Dashboard() {
                   <select
                     className="form-select ms-4 bg-body-secondary"
                     style={{ width: "10em" }}
+                    onChange={projectFilterHandler}
                   >
                     <option value="All">All</option>
                     <option value="In Progress">In Progress</option>
@@ -243,8 +258,8 @@ export default function Dashboard() {
                   </button>
                 </div>
                 <div className="projectDisplay gy-3 d-flex my-3 py-3 ps-2">
-                  {projectWiseTasks ? (
-                    Object.keys(projectWiseTasks).map((project) => (
+                  {filteredProjectWiseTasks ? (
+                    Object.keys(filteredProjectWiseTasks).map((project) => (
                       <div className="col-md-4 p-0" key={project}>
                         <div
                           className="card me-4 p-1 border-0 rounded-3"
@@ -261,7 +276,8 @@ export default function Dashboard() {
                             <h6
                               className="px-3 py-1 rounded-2"
                               style={
-                                projectWiseTasks[project].projectCompleted
+                                filteredProjectWiseTasks[project]
+                                  .projectCompleted
                                   ? {
                                       backgroundColor: "rgb(213 230 222)",
                                       color: "rgb(51 106 70)",
@@ -274,52 +290,71 @@ export default function Dashboard() {
                                     }
                               }
                             >
-                              {projectWiseTasks[project].projectCompleted
+                              {filteredProjectWiseTasks[project]
+                                .projectCompleted
                                 ? "Completed"
                                 : "In Progress"}
                             </h6>
                             <h6 className="card-title mt-3 mb-0">
                               <strong>
                                 {
-                                  projectWiseTasks[project].taskList[0].project
-                                    .name
+                                  filteredProjectWiseTasks[project].taskList[0]
+                                    .project.name
                                 }
                               </strong>
                             </h6>
                             <p className="card-text">
                               {
-                                projectWiseTasks[project].taskList[0].project
-                                  .description
+                                filteredProjectWiseTasks[project].taskList[0]
+                                  .project.description
                               }
                             </p>
-                            {projectWiseTasks[project].taskList.map((task) => (
-                              <div
-                                className="d-flex flex-column"
-                                key={task._id}
-                              >
-                                <div className="d-flex align-items-center">
-                                  <img
-                                    src={
-                                      task.status === "Completed"
-                                        ? "https://www.svgrepo.com/show/514262/tick-checkbox.svg"
-                                        : "https://www.svgrepo.com/show/510902/checkbox-unchecked.svg"
-                                    }
-                                    alt="Tick Checkbox SVG File"
-                                    width="20"
-                                    height="20"
-                                  />
-                                  <span className="ms-2">
-                                    <strong>{task.name}</strong>
-                                  </span>
+                            {filteredProjectWiseTasks[project].taskList.map(
+                              (task) => (
+                                <div
+                                  className="d-flex flex-column"
+                                  key={task._id}
+                                >
+                                  <div className="d-flex align-items-center">
+                                    <img
+                                      src={
+                                        task.status === "Completed"
+                                          ? "https://www.svgrepo.com/show/514262/tick-checkbox.svg"
+                                          : "https://www.svgrepo.com/show/510902/checkbox-unchecked.svg"
+                                      }
+                                      alt="Tick Checkbox SVG File"
+                                      width="20"
+                                      height="20"
+                                    />
+                                    <span className="ms-2">
+                                      <strong>{task.name}</strong>
+                                    </span>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              )
+                            )}
                           </div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <h3 className="m-5">Loading...</h3>
+                    // <h3 className="m-5">Loading...</h3>
+                    <h5 className="card-title placeholder-glow">
+                      <span
+                        className="placeholder col-6 bg-secondary"
+                        style={{ width: "50vw" }}
+                      ></span>
+                      <br />
+                      <span
+                        className="placeholder col-6 bg-warning"
+                        style={{ width: "30vw" }}
+                      ></span>
+                      <br />
+                      <span
+                        className="placeholder col-6 bg-success"
+                        style={{ width: "20vw" }}
+                      ></span>
+                    </h5>
                   )}
                 </div>
               </div>
@@ -331,6 +366,7 @@ export default function Dashboard() {
                   <select
                     className="form-select ms-4 bg-body-secondary"
                     style={{ width: "10em" }}
+                    onChange={taskFilterHandler}
                   >
                     <option value="All">All</option>
                     <option value="To Do">To Do</option>
@@ -345,10 +381,26 @@ export default function Dashboard() {
                   </button>
                 </div>
                 <div className="projectDisplay gy-3 d-flex my-4 py-3 ps-2">
-                  {loggedInUserTasks ? (
-                    loggedInUserTasks.map((eachTask) => taskRender(eachTask))
+                  {filteredLoggedInUserTask ? (
+                    filteredLoggedInUserTask.map((eachTask) => taskRender(eachTask))
                   ) : (
-                    <h3 className="m-5">Loading...</h3>
+                    // <h3 className="m-5">Loading...</h3>
+                    <h5 className="card-title placeholder-glow">
+                      <span
+                        className="placeholder col-6 bg-secondary"
+                        style={{ width: "50vw" }}
+                      ></span>
+                      <br />
+                      <span
+                        className="placeholder col-6 bg-warning"
+                        style={{ width: "30vw" }}
+                      ></span>
+                      <br />
+                      <span
+                        className="placeholder col-6 bg-success"
+                        style={{ width: "20vw" }}
+                      ></span>
+                    </h5>
                   )}
                 </div>
               </div>
@@ -367,7 +419,13 @@ export default function Dashboard() {
         ""
       )}
       {showNewTaskModal ? (
-        <CreateNewTaskModal closeModal={closeModal} tokenVerified={tokenObject.tokenVerified} setLoggedInUserTasks={setLoggedInUserTasks} loggedInUserTasks={loggedInUserTasks} token={token} />
+        <CreateNewTaskModal
+          closeModal={closeModal}
+          tokenVerified={tokenObject.tokenVerified}
+          setLoggedInUserTasks={setLoggedInUserTasks}
+          loggedInUserTasks={loggedInUserTasks}
+          token={token}
+        />
       ) : (
         ""
       )}

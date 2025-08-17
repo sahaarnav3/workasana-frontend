@@ -3,6 +3,7 @@ form input::placeholder {
 }
 
 body {
+  /* To stop the page from being scrolled */
   /* overflow: hidden; */
 }
 
@@ -45,13 +46,6 @@ body {
   background: #f0f0f0;
 }
 
-.newProjectModal {
-  background-color: white;
-  width: 35em;
-  border-radius: 5px;
-  position: relative;
-  
-}
 .blurred {
   width: 100vw;
   height: 100vh;
@@ -73,5 +67,9 @@ body {
   align-items: center;
   justify-content: center;
 }
-
-/* Try to find out how to stop the page from being scrolled */
+.newProjectModal {
+  background-color: white;
+  width: 35em;
+  border-radius: 5px;
+  position: relative;
+}
