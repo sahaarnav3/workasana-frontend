@@ -15,9 +15,11 @@ export default function Dashboard() {
   const [currentUser, setCurrentUser] = useState({});
   const [fetchFurtherData, setFetchFurtherData] = useState(false);
   const [loggedInUserTasks, setLoggedInUserTasks] = useState(null);
-  const [filteredLoggedInUserTask, setFilteredLoggedInUserTask] = useState(null);
+  const [filteredLoggedInUserTask, setFilteredLoggedInUserTask] =
+    useState(null);
   const [projectWiseTasks, setProjectWiseTasks] = useState(null);
-  const [filteredProjectWiseTasks, setFilteredProjectWiseTasks] = useState(null);
+  const [filteredProjectWiseTasks, setFilteredProjectWiseTasks] =
+    useState(null);
   // MODALS
   const [blurEnabled, setBlurEnabled] = useState(false);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
@@ -42,7 +44,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (fetchFurtherData) {
-      axios(`${apiBaseUrl}/tasks?owners=${currentUser._id}`, {
+      axios(`${apiBaseUrl}/tasks?owner=${currentUser._id}`, {
         headers: {
           authorization: token,
           "Content-Type": "application/json",
@@ -50,12 +52,16 @@ export default function Dashboard() {
       })
         .then(async (response) => {
           // console.log(response);
-          if (response.status == 200){
+          if (response.status == 200) {
             setFilteredLoggedInUserTask(response.data);
             return setLoggedInUserTasks(response.data);
           }
         })
-        .catch((error) => console.log("Error fetching data:", error));
+        .catch((error) => {
+          console.log("Error fetching data:", error);
+          setFilteredLoggedInUserTask([]);
+          return setLoggedInUserTasks([]);
+        });
     }
   }, [fetchFurtherData, token, currentUser]);
 
@@ -201,9 +207,11 @@ export default function Dashboard() {
   }
 
   function taskFilterHandler(e) {
-    if(e.target.value === "All")
+    if (e.target.value === "All")
       return setFilteredLoggedInUserTask(loggedInUserTasks);
-    setFilteredLoggedInUserTask(loggedInUserTasks.filter(task => task.status === e.target.value));
+    setFilteredLoggedInUserTask(
+      loggedInUserTasks.filter((task) => task.status === e.target.value)
+    );
   }
 
   return (
@@ -381,8 +389,10 @@ export default function Dashboard() {
                   </button>
                 </div>
                 <div className="projectDisplay gy-3 d-flex my-4 py-3 ps-2">
-                  {filteredLoggedInUserTask ? (
-                    filteredLoggedInUserTask.map((eachTask) => taskRender(eachTask))
+                  {filteredLoggedInUserTask ? ( filteredLoggedInUserTask.length == 0 ? ( <h4>Please Insert some task</h4> ) : (filteredLoggedInUserTask.map((eachTask) =>
+                      taskRender(eachTask)
+                    ))
+                    
                   ) : (
                     // <h3 className="m-5">Loading...</h3>
                     <h5 className="card-title placeholder-glow">
