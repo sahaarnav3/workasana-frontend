@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import { useEffect, useState } from "react";
 import useTokenCheck from "../utils/useTokenCheck";
@@ -67,10 +67,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (loggedInUserTasks) {
+      // console.log(loggedInUserTasks)
       let temp = loggedInUserTasks.reduce((acc, curr) => {
         const presentProjects = Object.keys(acc);
         if (!presentProjects.includes(curr.project.name))
-          acc[curr.project.name] = { taskList: [curr] };
+          acc[curr.project.name] = { taskList: [curr], "_id": curr.project._id };
         else acc[curr.project.name].taskList.push(curr);
         return acc;
       }, {});
@@ -268,7 +269,7 @@ export default function Dashboard() {
                 <div className="projectDisplay gy-3 d-flex my-3 py-3 ps-2">
                   {filteredProjectWiseTasks ? (
                     Object.keys(filteredProjectWiseTasks).map((project) => (
-                      <div className="col-md-4 p-0" key={project}>
+                      <NavLink className="col-md-4 p-0 text-decoration-none" key={project} to={`/project/${filteredProjectWiseTasks[project]._id}`}>
                         <div
                           className="card me-4 p-1 border-0 rounded-3"
                           style={{
@@ -343,7 +344,7 @@ export default function Dashboard() {
                             )}
                           </div>
                         </div>
-                      </div>
+                      </NavLink>
                     ))
                   ) : (
                     // <h3 className="m-5">Loading...</h3>

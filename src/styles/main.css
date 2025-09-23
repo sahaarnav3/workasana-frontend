@@ -2,7 +2,7 @@ form input::placeholder {
     font-size: 14px;
 }
 
-body {
+body { 
   /* To stop the page from being scrolled */
   /* overflow: hidden; */
 }
