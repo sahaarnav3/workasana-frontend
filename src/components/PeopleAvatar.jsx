@@ -21,7 +21,7 @@ export default function PeopleAvatar({ people }) {
   const extraCount = people.length - maxVisible;
 
   return (
-    <div style={{ display: "flex", alignItems: "center", marginTop: "1em" }}>
+    <div style={{ display: "flex", alignItems: "center"}}>
       <div className="avatar avatar-icon" style={{ zIndex: 10 }}>
         <img
           src="https://www.svgrepo.com/show/92943/user.svg"
