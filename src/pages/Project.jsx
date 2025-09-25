@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import useTokenCheck from "../utils/useTokenCheck";
 import axios from "axios";
 import PeopleAvatar from "../components/PeopleAvatar";
+import CreateNewTaskModal from "../components/CreateNewTaskModal";
 
 export default function Project() {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ export default function Project() {
   const [fetchedTasksList, setFetchedTasksList] = useState([]);
   const [filteredTaskList, setFilteredTaskList] = useState([]);
   const [projectData, setProjectData] = useState({});
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const [blurEnabled, setBlurEnabled] = useState(false);
   const projectId = useParams().projectId;
 
   const token = localStorage.getItem("userToken");
@@ -38,7 +41,7 @@ export default function Project() {
         },
       })
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           if (response.status == 200) {
             setFetchedTasksList(response.data);
             setFilteredTaskList(response.data);
@@ -52,15 +55,6 @@ export default function Project() {
         });
     }
   }, [projectId]);
-
-  const personArr = [
-    { name: "asdadsad", initial: "a" },
-    { name: "asdadsad", initial: "a" },
-    { name: "asdadsad", initial: "a" },
-    { name: "asdadsad", initial: "a" },
-    { name: "asdadsad", initial: "a" },
-    { name: "asdadsad", initial: "a" },
-  ];
 
   const priorityFromTag = (tagValue) => {
     if (tagValue == "Important")
@@ -180,175 +174,246 @@ export default function Project() {
     return `${day} ${month}, ${year}`;
   }
 
+  function closeModal() {
+    setShowNewTaskModal(false);
+    setBlurEnabled(false);
+  }
+  function showTaskModal() {
+    setShowNewTaskModal(true);
+    setBlurEnabled(true);
+  }
+
   return (
-    <main className="d-flex flex-row" style={{ width: "100vw" }}>
-      <Sidebar pageName="Project" currentUserDetails={currentUser} />
-      <div className="" style={{ minWidth: "88em" }}>
-        {loading ? (
-          // <h3 className="m-5">Loading...</h3>
-          <h5 className="card-title placeholder-glow m-5">
-            <span
-              className="placeholder col-6 bg-secondary"
-              style={{ width: "50vw" }}
-            ></span>
-            <br />
-            <span
-              className="placeholder col-6 bg-warning"
-              style={{ width: "30vw" }}
-            ></span>
-            <br />
-            <span
-              className="placeholder col-6 bg-success"
-              style={{ width: "20vw" }}
-            ></span>
-          </h5>
-        ) : tokenObject?.tokenVerified ? (
-          <section className="p-4">
-            <div className="gy-3 my-3 py-3 ps-2">
-              {projectData && fetchedTasksList ? (
-                <section className="main-content">
-                  {console.log(fetchedTasksList)}
-                  <div className="mb-5">
-                    <h3 className="mb-4">{projectData.name}</h3>
-                    <p className="text-secondary">{projectData.description}</p>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <label>Sort By:</label>
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary px-2 fw-normal ms-2 mx-1"
-                        style={{ borderRadius: "18px", fontSize: "13px" }}
-                      >
-                        Priority Low-High
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary px-2 fw-normal mx-1"
-                        style={{ borderRadius: "18px", fontSize: "13px" }}
-                      >
-                        Priority High-Low
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary px-2 fw-normal mx-1"
-                        style={{ borderRadius: "18px", fontSize: "13px" }}
-                      >
-                        Newest First
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary px-2 fw-normal mx-1"
-                        style={{ borderRadius: "18px", fontSize: "13px" }}
-                      >
-                        Oldest First
-                      </button>
+    <main>
+      <section
+        className={`d-flex flex-row ${blurEnabled ? "blurred" : ""}`}
+        style={{ width: "100vw" }}
+      >
+        <Sidebar pageName="Project" currentUserDetails={currentUser} />
+        <div className="" style={{ minWidth: "88em" }}>
+          {loading ? (
+            // <h3 className="m-5">Loading...</h3>
+            <h5 className="card-title placeholder-glow m-5">
+              <span
+                className="placeholder col-6 bg-secondary"
+                style={{ width: "50vw" }}
+              ></span>
+              <br />
+              <span
+                className="placeholder col-6 bg-warning"
+                style={{ width: "30vw" }}
+              ></span>
+              <br />
+              <span
+                className="placeholder col-6 bg-success"
+                style={{ width: "20vw" }}
+              ></span>
+            </h5>
+          ) : tokenObject?.tokenVerified ? (
+            <section className="p-4">
+              <div className="gy-3 my-3 py-3 ps-2">
+                {projectData && fetchedTasksList ? (
+                  <section className="main-content">
+                    {/* {console.log(fetchedTasksList)} */}
+                    <div className="mb-5">
+                      <h3 className="mb-4">{projectData.name}</h3>
+                      <p className="text-secondary">
+                        {projectData.description}
+                      </p>
                     </div>
-                    <div className="d-flex align-items-center">
-                      <select
-                        className="px-3 me-3 py-2 bg-body-secondary border-0 rounded"
-                        style={{ width: "90px" }}
-                      >
-                        <option value="All">All</option>
-                        <option value="To Do">To Do</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                      <button className="btn btn-primary px-3 px-1">
-                        + New Task
-                      </button>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <label>Sort By:</label>
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary px-2 fw-normal ms-2 mx-1"
+                          style={{ borderRadius: "18px", fontSize: "13px" }}
+                        >
+                          Priority Low-High
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary px-2 fw-normal mx-1"
+                          style={{ borderRadius: "18px", fontSize: "13px" }}
+                        >
+                          Priority High-Low
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary px-2 fw-normal mx-1"
+                          style={{ borderRadius: "18px", fontSize: "13px" }}
+                        >
+                          Newest First
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary px-2 fw-normal mx-1"
+                          style={{ borderRadius: "18px", fontSize: "13px" }}
+                        >
+                          Oldest First
+                        </button>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <select
+                          className="px-3 me-3 py-2 bg-body-secondary border-0 rounded"
+                          style={{ width: "90px" }}
+                        >
+                          <option value="All">All</option>
+                          <option value="To Do">To Do</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Completed">Completed</option>
+                        </select>
+                        <button
+                          className="btn btn-primary px-3 px-1"
+                          onClick={showTaskModal}
+                        >
+                          + New Task
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="main-table">
-                    <table className="table mt-4 ">
-                      <thead>
-                        <tr>
-                          <th
-                            scope="col"
-                            className="ps-3 py-3 text-secondary"
-                            style={{
-                              backgroundColor: "#e9f1fe",
-                              width: "20%",
-                              borderTopLeftRadius: "8px",
-                            }}
-                          >
-                            TASKS
-                          </th>
-                          <th
-                            scope="col"
-                            className="ps-3 py-3 text-secondary"
-                            style={{ backgroundColor: "#e9f1fe", width: "20%" }}
-                          >
-                            OWNER
-                          </th>
-                          <th
-                            scope="col"
-                            className="ps-3 py-3 text-secondary"
-                            style={{ backgroundColor: "#e9f1fe", width: "20%" }}
-                          >
-                            PRIORITY
-                          </th>
-                          <th
-                            scope="col"
-                            className="ps-3 py-3 text-secondary"
-                            style={{ backgroundColor: "#e9f1fe", width: "20%" }}
-                          >
-                            DUE ON
-                          </th>
-                          <th
-                            scope="col"
-                            className="ps-3 py-3 text-secondary"
-                            style={{
-                              backgroundColor: "#e9f1fe",
-                              width: "16%",
-                            }}
-                          >
-                            STATUS
-                          </th>
-                          <th
-                            scope="col"
-                            className="ps-3 py-3"
-                            style={{
-                              backgroundColor: "#e9f1fe",
-                              borderTopRightRadius: "8px",
-                            }}
-                          ></th>
-                        </tr>
-                      </thead>
-                      {filteredTaskList.length > 0 ? (
-                        filteredTaskList.map((task) => (
+                    <div className="main-table">
+                      <table className="table mt-4 ">
+                        <thead>
+                          <tr>
+                            <th
+                              scope="col"
+                              className="ps-3 py-3 text-secondary"
+                              style={{
+                                backgroundColor: "#e9f1fe",
+                                width: "20%",
+                                borderTopLeftRadius: "8px",
+                              }}
+                            >
+                              TASKS
+                            </th>
+                            <th
+                              scope="col"
+                              className="ps-3 py-3 text-secondary"
+                              style={{
+                                backgroundColor: "#e9f1fe",
+                                width: "20%",
+                              }}
+                            >
+                              OWNER
+                            </th>
+                            <th
+                              scope="col"
+                              className="ps-3 py-3 text-secondary"
+                              style={{
+                                backgroundColor: "#e9f1fe",
+                                width: "20%",
+                              }}
+                            >
+                              PRIORITY
+                            </th>
+                            <th
+                              scope="col"
+                              className="ps-3 py-3 text-secondary"
+                              style={{
+                                backgroundColor: "#e9f1fe",
+                                width: "20%",
+                              }}
+                            >
+                              DUE ON
+                            </th>
+                            <th
+                              scope="col"
+                              className="ps-3 py-3 text-secondary"
+                              style={{
+                                backgroundColor: "#e9f1fe",
+                                width: "16%",
+                              }}
+                            >
+                              STATUS
+                            </th>
+                            <th
+                              scope="col"
+                              className="ps-3 py-3"
+                              style={{
+                                backgroundColor: "#e9f1fe",
+                                borderTopRightRadius: "8px",
+                              }}
+                            ></th>
+                          </tr>
+                        </thead>
+                        {filteredTaskList.length > 0 ? (
+                          filteredTaskList.map((task) => (
+                            <tbody key={task.name}>
+                              <tr>
+                                <td className="ps-3 py-3 border fw-bold">
+                                  {task.name}
+                                </td>
+                                <td className="ps-3 py-3 border">
+                                  <div className="m-0 p-0">
+                                    <PeopleAvatar
+                                      people={task?.team?.members.reduce(
+                                        (acc, curr) => [
+                                          ...acc,
+                                          {
+                                            name: curr,
+                                            initial: curr[0],
+                                          },
+                                        ],
+                                        []
+                                      )}
+                                    />
+                                  </div>
+                                </td>
+                                <td className="ps-3 py-3 border">
+                                  {priorityFromTag(task.tags[0])}
+                                </td>
+                                <td className="ps-3 py-3 border fw-bold">
+                                  {dateRendered(
+                                    task.createdAt,
+                                    task.timeToComplete
+                                  )}
+                                </td>
+                                <td className="ps-3 py-3 border">
+                                  {taskStatusRender(task.status)}
+                                </td>
+                                <td className="ps-3 py-3 border fw-bold">
+                                  {" "}
+                                  <NavLink className="text-decoration-none text-dark">
+                                    →
+                                  </NavLink>{" "}
+                                </td>
+                              </tr>
+                            </tbody>
+                          ))
+                        ) : (
                           <tbody>
                             <tr>
                               <td className="ps-3 py-3 border fw-bold">
-                                {task.name}
+                                <span
+                                  className="placeholder bg-secondary"
+                                  style={{ width: "20%" }}
+                                ></span>
                               </td>
                               <td className="ps-3 py-3 border">
                                 <div className="m-0 p-0">
-                                  <PeopleAvatar
-                                    people={task?.team?.members.reduce(
-                                      (acc, curr) => [
-                                        ...acc,
-                                        {
-                                          name: curr,
-                                          initial: curr[0],
-                                        },
-                                      ],
-                                      []
-                                    )}
-                                  />
+                                  <span
+                                    className="placeholder bg-secondary"
+                                    style={{ width: "20%" }}
+                                  ></span>
                                 </div>
                               </td>
                               <td className="ps-3 py-3 border">
-                                {priorityFromTag(task.tags[0])}
+                                <span
+                                  className="placeholder bg-secondary"
+                                  style={{ width: "20%" }}
+                                ></span>
                               </td>
                               <td className="ps-3 py-3 border fw-bold">
-                                {dateRendered(
-                                  task.createdAt,
-                                  task.timeToComplete
-                                )}
+                                <span
+                                  className="placeholder bg-secondary"
+                                  style={{ width: "20%" }}
+                                ></span>
                               </td>
                               <td className="ps-3 py-3 border">
-                                {taskStatusRender(task.status)}
+                                <span
+                                  className="placeholder bg-secondary"
+                                  style={{ width: "20%" }}
+                                ></span>
                               </td>
                               <td className="ps-3 py-3 border fw-bold">
                                 {" "}
@@ -358,80 +423,48 @@ export default function Project() {
                               </td>
                             </tr>
                           </tbody>
-                        ))
-                      ) : (
-                        <tbody>
-                          <tr>
-                            <td className="ps-3 py-3 border fw-bold">
-                              <span
-                                className="placeholder bg-secondary"
-                                style={{ width: "20%" }}
-                              ></span>
-                            </td>
-                            <td className="ps-3 py-3 border">
-                              <div className="m-0 p-0">
-                                <span
-                                  className="placeholder bg-secondary"
-                                  style={{ width: "20%" }}
-                                ></span>
-                              </div>
-                            </td>
-                            <td className="ps-3 py-3 border">
-                              <span
-                                className="placeholder bg-secondary"
-                                style={{ width: "20%" }}
-                              ></span>
-                            </td>
-                            <td className="ps-3 py-3 border fw-bold">
-                              <span
-                                className="placeholder bg-secondary"
-                                style={{ width: "20%" }}
-                              ></span>
-                            </td>
-                            <td className="ps-3 py-3 border">
-                              <span
-                                className="placeholder bg-secondary"
-                                style={{ width: "20%" }}
-                              ></span>
-                            </td>
-                            <td className="ps-3 py-3 border fw-bold">
-                              {" "}
-                              <NavLink className="text-decoration-none text-dark">
-                                →
-                              </NavLink>{" "}
-                            </td>
-                          </tr>
-                        </tbody>
-                      )}
-                    </table>
-                  </div>
-                </section>
-              ) : (
-                <h5 className="card-title placeholder-glow">
-                  <span
-                    className="placeholder col-6 bg-secondary"
-                    style={{ width: "50vw" }}
-                  ></span>
-                  <br />
-                  <span
-                    className="placeholder col-6 bg-warning"
-                    style={{ width: "30vw" }}
-                  ></span>
-                  <br />
-                  <span
-                    className="placeholder col-6 bg-success"
-                    style={{ width: "20vw" }}
-                  ></span>
-                </h5>
-              )}
-            </div>
-          </section>
-        ) : (
-          <h4 className="m-5">
-            ACCESS FORBIDDEN. Redirecting to Login page in 5 seconds.
-          </h4>
-        )}
-      </div>
+                        )}
+                      </table>
+                    </div>
+                  </section>
+                ) : (
+                  <h5 className="card-title placeholder-glow">
+                    <span
+                      className="placeholder col-6 bg-secondary"
+                      style={{ width: "50vw" }}
+                    ></span>
+                    <br />
+                    <span
+                      className="placeholder col-6 bg-warning"
+                      style={{ width: "30vw" }}
+                    ></span>
+                    <br />
+                    <span
+                      className="placeholder col-6 bg-success"
+                      style={{ width: "20vw" }}
+                    ></span>
+                  </h5>
+                )}
+              </div>
+            </section>
+          ) : (
+            <h4 className="m-5">
+              ACCESS FORBIDDEN. Redirecting to Login page in 5 seconds.
+            </h4>
+          )}
+        </div>
+      </section>
+      {showNewTaskModal ? (
+        <CreateNewTaskModal
+          closeModal={closeModal}
+          tokenVerified={tokenObject.tokenVerified}
+          setLoggedInUserTasks={setFilteredTaskList}
+          loggedInUserTasks={filteredTaskList}
+          token={token}
+        />
+      ) : (
+        ""
+      )}
     </main>
   );
 }

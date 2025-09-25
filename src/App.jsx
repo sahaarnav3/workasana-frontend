@@ -9,6 +9,8 @@ import Reports from "./pages/Reports";
 import Setting from "./pages/Setting";
 import ErrorPage from "./pages/ErrorPage";
 
+import './styles/main.css'
+
 function App() {
 
   return (
